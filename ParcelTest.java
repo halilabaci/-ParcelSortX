@@ -23,16 +23,4 @@ public class ParcelTest {
         System.out.println("✅ Tüm testler başarılı.");
     }
 }
-//         return String.format("Parcel[%s to %s | Priority: %d | Size: %s | Tick: %d | Status: %s]",
-//                 parcelID, destinationCity, priority, size, arrivalTick, status);
-//     }
-//     }
-//
-//     }
-//
-//         return false;
-//     }
-//
-//     public ParcelRecord get(String parcelID) {
-//         int index = hash(parcelID);
-//         for (Entry e : table[index]) {       
+     
