@@ -18,6 +18,7 @@ public class Main {
         DestinationSorter sorter = new DestinationSorter();
         ReturnStack stack = new ReturnStack(); // B kişisi tarafından yazılmalı
         TerminalRotator rotator = new TerminalRotator(CITY_LIST); // B kişisi tarafından yazılmalı
+        rotator.initializeFromCityList(CITY_LIST.toArray(new String[0]));
         ReportGenerator reporter = new ReportGenerator("report.txt");
 
         // === İstatistik Takibi ===
@@ -44,7 +45,10 @@ public class Main {
                 String id = "P" + (1000 + totalParcelsGenerated);
                 String city = CITY_LIST.get(rand.nextInt(CITY_LIST.size()));
                 int priority = rand.nextInt(3) + 1;
-                Parcel.Size size = Parcel.Size.values()[rand.nextInt(3)];
+             
+                //size seçimi
+                String[] sizes = {"Small", "Medium", "Large"};
+                String size = sizes[rand.nextInt(3)];
 
                 Parcel parcel = new Parcel(id, city, priority, size, tick);
                 if (queue.enqueue(parcel)) {
