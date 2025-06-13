@@ -4,12 +4,12 @@ public class Parcel {
         IN_QUEUE, SORTED, DISPATCHED, RETURNED
     }
 
-    private String parcelID;
-    private String destinationCity;
-    private int priority;
-    private String size;
-    private int arrivalTick;
-    private ParcelStatus status;
+    public String parcelID;
+    public String destinationCity;
+    public int priority;
+    public String size;
+    public int arrivalTick;
+    public ParcelStatus status;
 
     // Constructor
     public Parcel(String parcelID, String destinationCity, int priority, String size, int arrivalTick) {
