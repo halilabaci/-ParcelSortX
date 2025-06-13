@@ -6,7 +6,7 @@ public class HashTableTest {
         ParcelTracker tracker = new ParcelTracker();
 
         // Test 1: Insert işlemi
-        Parcel p1 = new Parcel("P001", "Izmir", 2, Parcel.Size.MEDIUM, 10);
+        Parcel p1 = new Parcel("P001", "Izmir", 2, "Medium", 10);
         tracker.insert(p1.getParcelID(), p1);
 
         assert tracker.exists("P001") : "P001 eklenmemiş görünüyor";
@@ -14,8 +14,9 @@ public class HashTableTest {
         ParcelTracker.ParcelRecord record = tracker.get("P001");
         assert record != null : "P001 için kayıt bulunamadı";
         assert record.destinationCity.equals("Izmir") : "Destination yanlış";
-        assert record.status == Parcel.ParcelStatus.IN_QUEUE : "Status başlangıçta IN_QUEUE olmalı";
+        assert record.status == Parcel.ParcelStatus.IN_QUEUE : "Status yanlış";
         assert record.returnCount == 0 : "Return count başlangıçta 0 olmalı";
+        assert record.size.equals("Medium") : "Size yanlış (String olmalı)";
 
         // Test 2: Status güncelleme
         tracker.updateStatus("P001", Parcel.ParcelStatus.SORTED);
@@ -26,7 +27,7 @@ public class HashTableTest {
         tracker.incrementReturnCount("P001");
         assert tracker.get("P001").returnCount == 2 : "Return sayacı 2 olmalı";
 
-        // Test 4: DispatchTick atanması
+        // Test 4: Dispatch tick atama
         tracker.setDispatchTick("P001", 25);
         assert tracker.get("P001").dispatchTick == 25 : "Dispatch tick hatalı";
 
@@ -40,3 +41,4 @@ public class HashTableTest {
         System.out.println("✅ ParcelTracker için tüm testler başarılı.");
     }
 }
+

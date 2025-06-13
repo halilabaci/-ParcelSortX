@@ -11,9 +11,9 @@ public class QueueTest {
         assert buffer.size() == 0 : "Kuyruk boyutu 0 olmalı";
 
         // Test 2: Enqueue işlemi
-        Parcel p1 = new Parcel("P001", "Ankara", 1, Parcel.Size.SMALL, 1);
-        Parcel p2 = new Parcel("P002", "Izmir", 2, Parcel.Size.MEDIUM, 2);
-        Parcel p3 = new Parcel("P003", "Bursa", 3, Parcel.Size.LARGE, 3);
+        Parcel p1 = new Parcel("P001", "Ankara", 1, "Small", 1);
+        Parcel p2 = new Parcel("P002", "Izmir", 2, "Medium", 2);
+        Parcel p3 = new Parcel("P003", "Bursa", 3, "Large", 3);
 
         assert buffer.enqueue(p1) : "P001 eklenemedi";
         assert buffer.enqueue(p2) : "P002 eklenemedi";
@@ -23,7 +23,7 @@ public class QueueTest {
         assert buffer.size() == 3 : "Kuyruk boyutu 3 olmalı";
 
         // Test 3: Overflow durumu
-        Parcel p4 = new Parcel("P004", "Istanbul", 2, Parcel.Size.MEDIUM, 4);
+        Parcel p4 = new Parcel("P004", "Istanbul", 2, "Medium", 4);
         assert !buffer.enqueue(p4) : "Taşma kontrolü başarısız";
 
         // Test 4: Peek ve Dequeue işlemleri

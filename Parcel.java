@@ -1,9 +1,5 @@
 public class Parcel {
 
-    public enum Size {
-        SMALL, MEDIUM, LARGE
-    }
-
     public enum ParcelStatus {
         IN_QUEUE, SORTED, DISPATCHED, RETURNED
     }
@@ -11,12 +7,12 @@ public class Parcel {
     private String parcelID;
     private String destinationCity;
     private int priority;
-    private Size size;
+    private String size;
     private int arrivalTick;
     private ParcelStatus status;
 
     // Constructor
-    public Parcel(String parcelID, String destinationCity, int priority, Size size, int arrivalTick) {
+    public Parcel(String parcelID, String destinationCity, int priority, String size, int arrivalTick) {
         this.parcelID = parcelID;
         this.destinationCity = destinationCity;
         this.priority = priority;
@@ -38,7 +34,7 @@ public class Parcel {
         return priority;
     }
 
-    public Size getSize() {
+    public String getSize() {
         return size;
     }
 
@@ -58,6 +54,6 @@ public class Parcel {
     @Override
     public String toString() {
         return String.format("Parcel[%s to %s | Priority: %d | Size: %s | Tick: %d | Status: %s]",
-                parcelID, destinationCity, priority, size.name(), arrivalTick, status.name());
+                parcelID, destinationCity, priority, size, arrivalTick, status.name());
     }
 }

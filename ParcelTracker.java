@@ -10,7 +10,7 @@ public class ParcelTracker {
         public int returnCount = 0;
         public String destinationCity;
         public int priority;
-        public Parcel.Size size;
+        public String size;
 
         public ParcelRecord(Parcel parcel) {
             this.status = parcel.getStatus();
