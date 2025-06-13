@@ -11,6 +11,14 @@ public class TerminalRotator {
         }
     }
 
+    public TerminalRotator() {
+
+    }
+
+    public TerminalRotator(String[] cities) {
+        initializeFromCityList(cities);
+    }
+    
     private Node head;
     private Node current;
 
@@ -31,7 +39,7 @@ public class TerminalRotator {
     }
     
     public TerminalRotator(List<String> cities) {
-    initializeFromCityList(cities.toArray(new String[0]));
+        initializeFromCityList(cities.toArray(new String[0]));
     }
 
 
