@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class TerminalRotator {
     private static class Node {
         String cityName;
@@ -27,6 +29,11 @@ public class TerminalRotator {
         prev.next = head; // circular
         current = head;
     }
+    
+    public TerminalRotator(List<String> cities) {
+    initializeFromCityList(cities.toArray(new String[0]));
+    }
+
 
     public void advanceTerminal() {
         if (current != null) {

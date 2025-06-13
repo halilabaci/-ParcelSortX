@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ParcelTracker {
 
@@ -95,5 +97,23 @@ public class ParcelTracker {
             record.dispatchTick = tick;
         }
     }
+    public List<String> getAllIDs() {
+    List<String> ids = new ArrayList<>();
+    for (LinkedList<Entry> bucket : table) {
+        for (Entry e : bucket) {
+            ids.add(e.key);
+        }
+    }
+    return ids;
+    }
+
+    public double getLoadFactor() {
+        int count = 0;
+        for (LinkedList<Entry> bucket : table) {
+            count += bucket.size();
+        }
+        return (double) count / TABLE_SIZE;
+    }
+
 
 }
