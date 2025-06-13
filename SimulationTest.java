@@ -28,7 +28,7 @@ public class SimulationTest {
             for (int i = 0; i < parcelCount; i++) {
                 String id = "PX" + (totalGenerated + 1);
                 String city = CITY_LIST.get(rand.nextInt(CITY_LIST.size()));
-                Parcel p = new Parcel(id, city, 1, Parcel.Size.SMALL, tick);
+                Parcel p = new Parcel(id, city, 1, "Small", tick);
                 if (queue.enqueue(p)) {
                     tracker.insert(id, p);
                     totalGenerated++;
