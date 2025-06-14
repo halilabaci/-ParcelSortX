@@ -126,7 +126,7 @@ public class Main {
             maxStackSize = Math.max(maxStackSize, stack.size()); // stack’in maksimum doluluk oranı
         }
 
-        // === Rapor için metrikler hesaplanıyor ===
+        //  Rapor için metrikler hesaplamalar yapılıyor 
         Map<String, Integer> parcelsPerCity = new HashMap<>();
         for (String city : CITY_LIST) {
             parcelsPerCity.put(city, sorter.countCityParcels(city));

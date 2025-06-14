@@ -2,10 +2,11 @@ import java.util.*;
 
 public class DestinationSorter {
 
+    // İç sınıf: Her bir şehir düğümü 
     private class ParcelNode {
-        String cityName;
-        LinkedList<Parcel> parcelList;
-        ParcelNode left, right;
+        String cityName; // şehir ismi
+        LinkedList<Parcel> parcelList; // o şehre ait Parcel listesi (FIFO mantığında)
+        ParcelNode left, right; // ikili arama ağacının sol ve sağ çocukları
 
         ParcelNode(String cityName) {
             this.cityName = cityName;
@@ -15,41 +16,49 @@ public class DestinationSorter {
         }
     }
 
-    private ParcelNode root;
+    private ParcelNode root; // ağacın kök düğümü
 
     public DestinationSorter() {
         this.root = null;
     }
 
-    // INSERT
+    // Parcel ekleme işlemi 
+    // Yeni bir Parcel geldiğinde ağaca ekliyorum
     public void insertParcel(Parcel parcel) {
         root = insertRecursive(root, parcel);
     }
 
+    // Rekürsif olarak uygun konumu bulup ekliyorum
     private ParcelNode insertRecursive(ParcelNode node, Parcel parcel) {
         if (node == null) {
+            // Şehir daha önce eklenmemişse yeni bir düğüm oluşturuyorum
             ParcelNode newNode = new ParcelNode(parcel.getDestinationCity());
             newNode.parcelList.add(parcel);
             return newNode;
         }
 
+        // Şehir adına göre karşılaştırma yapıyorum (alfabetik sıraya göre)
         int cmp = parcel.getDestinationCity().compareTo(node.cityName);
         if (cmp == 0) {
-            node.parcelList.add(parcel);  // FIFO
+            // Aynı şehirse, sadece listeye ekliyorum (FIFO mantığı)
+            node.parcelList.add(parcel);
         } else if (cmp < 0) {
+            // Daha küçükse sola ekle
             node.left = insertRecursive(node.left, parcel);
         } else {
+            // Daha büyükse sağa ekle
             node.right = insertRecursive(node.right, parcel);
         }
         return node;
     }
 
-    // GET ALL PARCELS FOR A CITY
+    // Belirli bir şehirdeki tüm parcelleri getir 
     public LinkedList<Parcel> getCityParcels(String cityName) {
         ParcelNode node = findNode(root, cityName);
         return node == null ? null : node.parcelList;
     }
 
+    // Ağacın içinde belirtilen şehir adını arıyorum
     private ParcelNode findNode(ParcelNode node, String city) {
         if (node == null) return null;
         int cmp = city.compareTo(node.cityName);
@@ -57,7 +66,7 @@ public class DestinationSorter {
         return cmp < 0 ? findNode(node.left, city) : findNode(node.right, city);
     }
 
-    // REMOVE PARCEL BY ID
+    //  Belirli bir şehirdeki parcellerden birini ID’ye göre sil 
     public boolean removeParcel(String city, String parcelID) {
         ParcelNode node = findNode(root, city);
         if (node == null) return false;
@@ -65,20 +74,20 @@ public class DestinationSorter {
         Iterator<Parcel> it = node.parcelList.iterator();
         while (it.hasNext()) {
             if (it.next().getParcelID().equals(parcelID)) {
-                it.remove();
+                it.remove(); // aradığım parcel i bulup siliyorum
                 return true;
             }
         }
-        return false;
+        return false; // yoksa false dön
     }
 
-    // COUNT PARCELS PER CITY
+    //  Şehirde kaç tane Parcel var
     public int countCityParcels(String city) {
         ParcelNode node = findNode(root, city);
         return node == null ? 0 : node.parcelList.size();
     }
 
-    // IN-ORDER TRAVERSAL (Şehirleri alfabetik sırayla gez)
+    //  Şehirleri alfabetik olarak gezip bastırıyorum 
     public void inOrderTraversal() {
         traverse(root);
     }
@@ -90,7 +99,8 @@ public class DestinationSorter {
         traverse(node.right);
     }
 
-    // BONUS: BST yüksekliği
+    // Ağacın yüksekliğini döner 
+    // En uzun yol kaç seviye? Onu bulmak için yazdım
     public int getHeight() {
         return heightRecursive(root);
     }
@@ -100,19 +110,22 @@ public class DestinationSorter {
         return 1 + Math.max(heightRecursive(node.left), heightRecursive(node.right));
     }
 
-    // BONUS: En çok yük olan şehir
+    // En çok parcel in olduğu şehri bul ===
+    // Hem analiz hem de yük dağılımı için işime yarıyor
     public String getCityWithMaxLoad() {
         return getCityWithMaxLoadRecursive(root, null, 0);
     }
 
     private String getCityWithMaxLoadRecursive(ParcelNode node, String maxCity, int maxCount) {
         if (node == null) return maxCity;
+        
         if (node.parcelList.size() > maxCount) {
             maxCity = node.cityName;
             maxCount = node.parcelList.size();
         }
+
+        // Sola ve sağa giderek en fazla yüke sahip şehri buluyorum
         maxCity = getCityWithMaxLoadRecursive(node.left, maxCity, maxCount);
         return getCityWithMaxLoadRecursive(node.right, maxCity, maxCount);
     }
 }
-
