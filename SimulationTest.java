@@ -18,6 +18,7 @@ public class SimulationTest {
         int tick = 0;
         int totalGenerated = 0;
         int totalDispatched = 0;
+        int totalMisrouted = 0;
 
         while (tick < 5) { // Mini simülasyon
             tick++;
@@ -44,15 +45,36 @@ public class SimulationTest {
                 System.out.println("Sorted: " + p.getParcelID() + " → " + p.getDestinationCity());
             }
 
-            // Dispatch işlemi
+            // ReturnStack → tekrar BST'ye
+            int retry = Math.min(2, stack.size());
+            for (int i = 0; i < retry; i++) {
+                Parcel r = stack.pop();
+                if (r != null) {
+                    tracker.updateStatus(r.getParcelID(), Parcel.ParcelStatus.SORTED);
+                    sorter.insertParcel(r);
+                    System.out.println("Retrying from stack: " + r.getParcelID());
+                }
+            }
+
+            // Dispatch işlemi (ve bazen misroute)
             String activeCity = rotator.getActiveTerminal();
             LinkedList<Parcel> parcels = sorter.getCityParcels(activeCity);
             if (parcels != null && !parcels.isEmpty()) {
                 Parcel dispatch = parcels.peek();
-                sorter.removeParcel(activeCity, dispatch.getParcelID());
-                tracker.updateStatus(dispatch.getParcelID(), Parcel.ParcelStatus.DISPATCHED);
-                System.out.println("Dispatched: " + dispatch.getParcelID() + " to " + activeCity);
-                totalDispatched++;
+                boolean misrouted = rand.nextBoolean(); // %50 ihtimal
+
+                if (misrouted) {
+                    tracker.updateStatus(dispatch.getParcelID(), Parcel.ParcelStatus.RETURNED);
+                    tracker.incrementReturnCount(dispatch.getParcelID());
+                    stack.push(dispatch);
+                    totalMisrouted++;
+                    System.out.println("MISROUTED → Stack: " + dispatch.getParcelID());
+                } else {
+                    tracker.updateStatus(dispatch.getParcelID(), Parcel.ParcelStatus.DISPATCHED);
+                    sorter.removeParcel(activeCity, dispatch.getParcelID());
+                    System.out.println("Dispatched: " + dispatch.getParcelID() + " to " + activeCity);
+                    totalDispatched++;
+                }
             }
 
             // Terminal rotasyonu
@@ -64,7 +86,8 @@ public class SimulationTest {
 
         System.out.println("\nToplam Üretilen: " + totalGenerated);
         System.out.println("Toplam Gönderilen: " + totalDispatched);
-
+        System.out.println("Toplam Misrouted (stack’e giden): " + totalMisrouted);
+        System.out.println("ReturnStack'te kalan: " + stack.size());
         System.out.println("✅ SimulationTest başarılı şekilde tamamlandı.");
     }
 }
