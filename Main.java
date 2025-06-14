@@ -175,6 +175,6 @@ public class Main {
                 loadFactor
         );
 
-        System.out.println("✅ Simülasyon tamamlandı ve rapor üretildi.");
+        System.out.println(" Simülasyon tamamlandı ve rapor üretildi.");
     }
 }
