@@ -726,3 +726,169 @@ Rotated to: Antalya
  
 Rotated to: Istanbul
  
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1012 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Returned: P1029 -> Sent to ReturnStack
+ 
+Rotated to: Istanbul
+ 
+Returned: P1017 -> Sent to ReturnStack
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1012 -> Sent to ReturnStack
+ 
+Returned: P1032 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Returned: P1081 -> Sent to ReturnStack
+ 
+Rotated to: Izmir
+ 
+Returned: P1037 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Returned: P1071 -> Sent to ReturnStack
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1064 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Returned: P1142 -> Sent to ReturnStack
+ 
+Rotated to: Antalya
+ 
+Returned: P1078 -> Sent to ReturnStack
+ 
+Rotated to: Istanbul
+ 
+Returned: P1121 -> Sent to ReturnStack
+ 
+Returned: P1121 -> Sent to ReturnStack
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1072 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Returned: P1165 -> Sent to ReturnStack
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Rotated to: Bursa
+ 
+Returned: P1244 -> Sent to ReturnStack
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1037 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Returned: P1175 -> Sent to ReturnStack
+ 
+Rotated to: Istanbul
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1196 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Returned: P1277 -> Sent to ReturnStack
+ 
+Rotated to: Antalya
+ 
+Rotated to: Istanbul
+ 
+Returned: P1234 -> Sent to ReturnStack
+ 
+Rotated to: Ankara
+ 
+Rotated to: Izmir
+ 
+Returned: P1200 -> Sent to ReturnStack
+ 
+Rotated to: Bursa
+ 
+Rotated to: Antalya
+ 
+Returned: P1212 -> Sent to ReturnStack
+ 
+Rotated to: Istanbul
+ 
