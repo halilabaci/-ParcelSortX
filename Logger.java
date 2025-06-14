@@ -39,6 +39,7 @@ public class Logger {
     // ReturnStack’e gönderilen parcel’ı buradan takip ediyorum
     public static void logReturnEvent(Parcel p) {
         log("Returned: " + p.getParcelID() + " -> Sent to ReturnStack");
+        log(" "); 
     }
 
     // O anki aktif terminal (yani dağıtım yapılan şehir) loglanıyor
@@ -54,6 +55,7 @@ public class Logger {
     // Terminal rotasyonu gerçekleştiğinde hangi şehre geçildiğini kaydediyorum
     public static void logTerminalChange(String city) {
         log("Rotated to: " + city);
+        log(" ");
     }
 
     // Ana loglama işlemi – hem terminale basıyor hem log.txt’ye yazıyor
