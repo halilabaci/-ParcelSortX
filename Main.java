@@ -3,25 +3,31 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        // === Sabit Konfigürasyonlar ===
-        final int MAX_TICKS = 300;
+        // Sabit Konfigürasyonlar 
+        // Simülasyon süresi, queue kapasitesi, her tick'te üretilecek parcel sayısı aralığı gibi
+        // sabit değerleri burada tanımlıyorum. Her şey buradan kontrol ediliyor.
+        final int MAX_TICKS = 300; // toplam simülasyon süresi (tick cinsinden)
         final int QUEUE_CAPACITY = 30;
-        final int TERMINAL_ROTATION_INTERVAL = 5;
+        final int TERMINAL_ROTATION_INTERVAL = 5; // her 5 tick'te bir terminal değişiyor
         final int PARCEL_PER_TICK_MIN = 1;
         final int PARCEL_PER_TICK_MAX = 3;
-        final double MISROUTING_RATE = 0.1;
+        final double MISROUTING_RATE = 0.1; // %10 yanlış yönlendirme oranı
+
+        // Hedef şehirler – rotator bu şehirler arasında döner
         final List<String> CITY_LIST = Arrays.asList("Istanbul", "Ankara", "Izmir", "Bursa", "Antalya");
 
-        // === Nesne Oluşturma ===
-        ArrivalBuffer queue = new ArrivalBuffer(QUEUE_CAPACITY);
-        ParcelTracker tracker = new ParcelTracker();
-        DestinationSorter sorter = new DestinationSorter();
-        ReturnStack stack = new ReturnStack(); // B kişisi tarafından yazılmalı
-        TerminalRotator rotator = new TerminalRotator(CITY_LIST); // B kişisi tarafından yazılmalı
-        rotator.initializeFromCityList(CITY_LIST.toArray(new String[0]));
-        ReportGenerator reporter = new ReportGenerator("report.txt");
+        // Nesne Oluşturma 
+        // Tüm veri yapılarımı burada oluşturuyorum
+        ArrivalBuffer queue = new ArrivalBuffer(QUEUE_CAPACITY); // gelen parcel'lar için kuyruk
+        ParcelTracker tracker = new ParcelTracker(); // parcel’ların durumunu takip etmek için hash table
+        DestinationSorter sorter = new DestinationSorter(); // şehir bazlı BST
+        ReturnStack stack = new ReturnStack(); // yanlış yönlendirmeler buraya gider (stack yapısı)
+        TerminalRotator rotator = new TerminalRotator(CITY_LIST); // şehirleri döngüsel olarak gezen yapı
+        rotator.initializeFromCityList(CITY_LIST.toArray(new String[0])); // şehirleri rotatora yüklüyorum
+        ReportGenerator reporter = new ReportGenerator("report.txt"); // sonunda rapor üretecek
 
-        // === İstatistik Takibi ===
+        // İstatistik Takibi
+        // Tüm simülasyon boyunca toplanacak istatistikleri burada tanımladım
         int tick = 0;
         int totalParcelsGenerated = 0;
         int totalDispatched = 0;
@@ -32,92 +38,101 @@ public class Main {
         int maxDelay = 0;
         String maxDelayParcelID = "-";
 
-        Random rand = new Random();
+        Random rand = new Random(); // rastgele üretimler için
 
-        // === Simülasyon Döngüsü ===
+        // Simülasyon Döngüsü 
         while (tick < MAX_TICKS) {
             tick++;
             System.out.println("[Tick " + tick + "]");
 
-            // 1. Yeni Parcel üret
+            // 1. Yeni Parcel üretimi
             int parcelCount = rand.nextInt(PARCEL_PER_TICK_MAX - PARCEL_PER_TICK_MIN + 1) + PARCEL_PER_TICK_MIN;
             for (int i = 0; i < parcelCount; i++) {
-                String id = "P" + (1000 + totalParcelsGenerated);
-                String city = CITY_LIST.get(rand.nextInt(CITY_LIST.size()));
-                int priority = rand.nextInt(3) + 1;
-             
-                //size seçimi
+                String id = "P" + (1000 + totalParcelsGenerated); // her kargoya eşsiz ID
+                String city = CITY_LIST.get(rand.nextInt(CITY_LIST.size())); // rastgele bir hedef şehir
+                int priority = rand.nextInt(3) + 1; // öncelik (1–3)
+
+                // boyut da rastgele geliyor
                 String[] sizes = {"Small", "Medium", "Large"};
                 String size = sizes[rand.nextInt(3)];
 
+                // parcel oluşturuyorum
                 Parcel parcel = new Parcel(id, city, priority, size, tick);
+
+                // enqueue başarılıysa takibe alıyorum
                 if (queue.enqueue(parcel)) {
                     tracker.insert(id, parcel);
                     totalParcelsGenerated++;
-                    maxQueueSize = Math.max(maxQueueSize, queue.size());
+                    maxQueueSize = Math.max(maxQueueSize, queue.size()); // maksimum kuyruk boyutunu güncelle
                 }
             }
 
-            // 2. Queue → BST
+            // 2. Kuyruktaki parcel'ları BST'ye aktarıyorum
             while (!queue.isEmpty()) {
                 Parcel parcel = queue.dequeue();
                 tracker.updateStatus(parcel.getParcelID(), Parcel.ParcelStatus.SORTED);
-                sorter.insertParcel(parcel);
+                sorter.insertParcel(parcel); // doğru şehir dalına yerleşiyor
             }
 
             // 3. Dispatch işlemi
-            String currentCity = rotator.getActiveTerminal();
-            LinkedList<Parcel> cityParcels = sorter.getCityParcels(currentCity);
+            String currentCity = rotator.getActiveTerminal(); // aktif terminal hangi şehirdeyse onu alıyorum
+            LinkedList<Parcel> cityParcels = sorter.getCityParcels(currentCity); // o şehirdeki parcel'lar
+
             if (cityParcels != null && !cityParcels.isEmpty()) {
-                Parcel candidate = cityParcels.peek(); // FIFO
-                boolean misroute = rand.nextDouble() < MISROUTING_RATE;
+                Parcel candidate = cityParcels.peek(); // sıradaki parcel (FIFO)
+                boolean misroute = rand.nextDouble() < MISROUTING_RATE; // %10 ihtimalle yanlış yönlendir
 
                 if (misroute) {
+                    // kargo yanlış yönlendirildi → ReturnStack'e gider
                     tracker.updateStatus(candidate.getParcelID(), Parcel.ParcelStatus.RETURNED);
                     tracker.incrementReturnCount(candidate.getParcelID());
                     stack.push(candidate);
                     totalReturned++;
                     System.out.println("Parcel " + candidate.getParcelID() + " misrouted → stack");
                 } else {
+                    // doğru adrese gönderildi
                     tracker.updateStatus(candidate.getParcelID(), Parcel.ParcelStatus.DISPATCHED);
                     tracker.setDispatchTick(candidate.getParcelID(), tick);
                     sorter.removeParcel(currentCity, candidate.getParcelID());
                     totalDispatched++;
 
+                    // gönderilen parcel’ın gecikme süresini hesaplıyorum
                     int delay = tick - candidate.getArrivalTick();
                     totalProcessingTime += delay;
                     if (delay > maxDelay) {
                         maxDelay = delay;
                         maxDelayParcelID = candidate.getParcelID();
                     }
+
                     System.out.println("Parcel " + candidate.getParcelID() + " dispatched to " + currentCity);
                 }
             }
 
-            // 4. ReturnStack'ten yeniden ekleme
-            if (tick % 3 == 0) {
-                int retry = Math.min(2, stack.size());
+            // 4. ReturnStack’teki parcel’ları yeniden deniyorum
+            if (tick % 3 == 0) { // her 3 tick’te bir
+                int retry = Math.min(2, stack.size()); // en fazla 2 parcel geri dönsün
                 for (int i = 0; i < retry; i++) {
                     Parcel returned = stack.pop();
                     tracker.updateStatus(returned.getParcelID(), Parcel.ParcelStatus.SORTED);
-                    sorter.insertParcel(returned);
+                    sorter.insertParcel(returned); // tekrar BST’ye gönderiyorum
                 }
             }
 
             // 5. Terminal rotasyonu
             if (tick % TERMINAL_ROTATION_INTERVAL == 0) {
-                rotator.advanceTerminal();
+                rotator.advanceTerminal(); // sıradaki şehre geçiyoruz
             }
 
-            maxStackSize = Math.max(maxStackSize, stack.size());
+            maxStackSize = Math.max(maxStackSize, stack.size()); // stack’in maksimum doluluk oranı
         }
 
-        // === Rapor için metrikler hesapla ===
+        // === Rapor için metrikler hesaplanıyor ===
         Map<String, Integer> parcelsPerCity = new HashMap<>();
         for (String city : CITY_LIST) {
             parcelsPerCity.put(city, sorter.countCityParcels(city));
         }
 
+        // en çok hedeflenen şehir
         String mostTargetedCity = CITY_LIST.get(0);
         for (String city : CITY_LIST) {
             if (parcelsPerCity.get(city) > parcelsPerCity.get(mostTargetedCity)) {
@@ -125,7 +140,10 @@ public class Main {
             }
         }
 
+        // ortalama gecikme süresi
         double avgTime = totalDispatched == 0 ? 0 : (double) totalProcessingTime / totalDispatched;
+
+        // birden fazla kez iade edilmiş parcel sayısı
         int returnedMoreThanOnce = 0;
         for (String id : tracker.getAllIDs()) {
             if (tracker.get(id).returnCount > 1) {
@@ -133,8 +151,10 @@ public class Main {
             }
         }
 
+        // hash table load factor hesabı
         double loadFactor = tracker.getLoadFactor();
 
+        // rapor dosyasını oluşturuyorum
         reporter.generateReport(
                 tick,
                 totalParcelsGenerated,
