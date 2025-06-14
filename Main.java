@@ -54,6 +54,7 @@ public class Main {
                 if (queue.enqueue(parcel)) {
                     tracker.insert(id, parcel);
                     totalParcelsGenerated++;
+                    maxQueueSize = Math.max(maxQueueSize, queue.size());
                 }
             }
 
@@ -108,7 +109,6 @@ public class Main {
                 rotator.advanceTerminal();
             }
 
-            maxQueueSize = Math.max(maxQueueSize, queue.size());
             maxStackSize = Math.max(maxStackSize, stack.size());
         }
 
