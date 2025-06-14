@@ -3,18 +3,19 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        // Sabit Konfigürasyonlar 
-        // Simülasyon süresi, queue kapasitesi, her tick'te üretilecek parcel sayısı aralığı gibi
-        // sabit değerleri burada tanımlıyorum. Her şey buradan kontrol ediliyor.
-        final int MAX_TICKS = 300; // toplam simülasyon süresi (tick cinsinden)
-        final int QUEUE_CAPACITY = 30;
-        final int TERMINAL_ROTATION_INTERVAL = 5; // her 5 tick'te bir terminal değişiyor
-        final int PARCEL_PER_TICK_MIN = 1;
-        final int PARCEL_PER_TICK_MAX = 3;
-        final double MISROUTING_RATE = 0.1; // %10 yanlış yönlendirme oranı
+
+        // Config dosyasından değerleri oku
+        ConfigReader config = new ConfigReader("config.txt");
+        // ConfigReader sınıfı ile config.txt dosyasından değerleri okuyorum
+        final int MAX_TICKS = config.getInt("MAX TICKS"); // toplam simülasyon süresi (tick cinsinden)
+        final int QUEUE_CAPACITY = config.getInt("QUEUE CAPACITY");
+        final int TERMINAL_ROTATION_INTERVAL = config.getInt("TERMINAL ROTATION INTERVAL"); // her 5 tick'te bir terminal değişiyor
+        final int PARCEL_PER_TICK_MIN = config.getInt("PARCEL PER TICK MIN");
+        final int PARCEL_PER_TICK_MAX = config.getInt("PARCEL PER TICK MAX");
+        final double MISROUTING_RATE = config.getDouble("MISROUTING RATE"); // %10 yanlış yönlendirme oranı
 
         // Hedef şehirler – rotator bu şehirler arasında döner
-        final List<String> CITY_LIST = Arrays.asList("Istanbul", "Ankara", "Izmir", "Bursa", "Antalya");
+        final List<String> CITY_LIST = config.getList("CITY LIST");
 
         // Nesne Oluşturma 
         // Tüm veri yapılarımı burada oluşturuyorum
