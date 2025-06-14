@@ -7,11 +7,11 @@ public class Main {
         // Config dosyasından değerleri oku
         ConfigReader config = new ConfigReader("config.txt");
         // ConfigReader sınıfı ile config.txt dosyasından değerleri okuyorum
-        final int MAX_TICKS = config.getInt("MAX TICKS"); // toplam simülasyon süresi (tick cinsinden)
-        final int QUEUE_CAPACITY = config.getInt("QUEUE CAPACITY");
-        final int TERMINAL_ROTATION_INTERVAL = config.getInt("TERMINAL ROTATION INTERVAL"); // her 5 tick'te bir terminal değişiyor
-        final int PARCEL_PER_TICK_MIN = config.getInt("PARCEL PER TICK MIN");
-        final int PARCEL_PER_TICK_MAX = config.getInt("PARCEL PER TICK MAX");
+        final int MAX_TICKS = config.getInt("MAX TICKS"); // simülasyon toplam kaç adım sürecek
+        final int QUEUE_CAPACITY = config.getInt("QUEUE CAPACITY");// ArrivalBuffer'ın kapasitesi
+        final int TERMINAL_ROTATION_INTERVAL = config.getInt("TERMINAL ROTATION INTERVAL"); // kaç adımda bir terminal değişiyor
+        final int PARCEL_PER_TICK_MIN = config.getInt("PARCEL PER TICK MIN");// kaç adımda bir terminal değişiyor
+        final int PARCEL_PER_TICK_MAX = config.getInt("PARCEL PER TICK MAX");// maksimum parcel
         final double MISROUTING_RATE = config.getDouble("MISROUTING RATE"); // %10 yanlış yönlendirme oranı
 
         // Hedef şehirler – rotator bu şehirler arasında döner
@@ -44,9 +44,14 @@ public class Main {
         // Simülasyon Döngüsü 
         while (tick < MAX_TICKS) {
             tick++;
-            System.out.println("[Tick " + tick + "]");
 
-            // 1. Yeni Parcel üretimi
+            // Ekrana yazdırmak için her tick'in verilerini biriktiriyorum
+            List<String> newParcelLogs = new ArrayList<>();
+            List<String> sortedParcelIDs = new ArrayList<>();
+            String dispatchLog = "None";
+            String returnLog = "None";
+
+            // 1. Yeni Parcel üretimi her tick'te rastgele sayıda parcel üretiyorum
             int parcelCount = rand.nextInt(PARCEL_PER_TICK_MAX - PARCEL_PER_TICK_MIN + 1) + PARCEL_PER_TICK_MIN;
             for (int i = 0; i < parcelCount; i++) {
                 String id = "P" + (1000 + totalParcelsGenerated); // her kargoya eşsiz ID
@@ -65,6 +70,7 @@ public class Main {
                     tracker.insert(id, parcel);
                     totalParcelsGenerated++;
                     maxQueueSize = Math.max(maxQueueSize, queue.size()); // maksimum kuyruk boyutunu güncelle
+                     newParcelLogs.add(id + " to " + city + " (Priority " + priority + ")");
                 }
             }
 
@@ -73,6 +79,7 @@ public class Main {
                 Parcel parcel = queue.dequeue();
                 tracker.updateStatus(parcel.getParcelID(), Parcel.ParcelStatus.SORTED);
                 sorter.insertParcel(parcel); // doğru şehir dalına yerleşiyor
+                sortedParcelIDs.add(parcel.getParcelID());
             }
 
             // 3. Dispatch işlemi
@@ -89,7 +96,7 @@ public class Main {
                     tracker.incrementReturnCount(candidate.getParcelID());
                     stack.push(candidate);
                     totalReturned++;
-                    System.out.println("Parcel " + candidate.getParcelID() + " misrouted → stack");
+                    returnLog = candidate.getParcelID() + " misrouted -> Pushed to ReturnStack";
                 } else {
                     // doğru adrese gönderildi
                     tracker.updateStatus(candidate.getParcelID(), Parcel.ParcelStatus.DISPATCHED);
@@ -105,7 +112,7 @@ public class Main {
                         maxDelayParcelID = candidate.getParcelID();
                     }
 
-                    System.out.println("Parcel " + candidate.getParcelID() + " dispatched to " + currentCity);
+                    dispatchLog = candidate.getParcelID() + " from BST to " + currentCity + " ---> Success";
                 }
             }
 
@@ -125,6 +132,18 @@ public class Main {
             }
 
             maxStackSize = Math.max(maxStackSize, stack.size()); // stack’in maksimum doluluk oranı
+            
+            // Hocanın istediği çıktıya uygun formatta ekrana yazdırma
+            System.out.println("[Tick " + tick + "]");
+            System.out.println("New Parcels: " + (newParcelLogs.isEmpty() ? "None" : String.join(", ", newParcelLogs)));
+            System.out.println("Queue Size: " + queue.size());
+            System.out.println("Sorted to BST: " + (sortedParcelIDs.isEmpty() ? "None" : String.join(", ", sortedParcelIDs)));
+            System.out.println("Dispatched: " + dispatchLog);
+            System.out.println("Returned: " + returnLog);
+            System.out.println("Active Terminal: " + currentCity);
+            System.out.println("ReturnStack Size: " + stack.size());
+            System.out.println();
+
         }
 
         //  Rapor için metrikler hesaplamalar yapılıyor 
