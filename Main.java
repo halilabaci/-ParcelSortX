@@ -75,11 +75,14 @@ public class Main {
             }
 
             // 2. Kuyruktaki parcel'ları BST'ye aktarıyorum
-            while (!queue.isEmpty()) {
+            int dequeueLimit = 2;
+            int dequeued = 0;
+            while (!queue.isEmpty() && dequeued < dequeueLimit) {
                 Parcel parcel = queue.dequeue();
                 tracker.updateStatus(parcel.getParcelID(), Parcel.ParcelStatus.SORTED);
-                sorter.insertParcel(parcel); // doğru şehir dalına yerleşiyor
+                sorter.insertParcel(parcel);
                 sortedParcelIDs.add(parcel.getParcelID());
+                dequeued++;
             }
 
             // 3. Dispatch işlemi
